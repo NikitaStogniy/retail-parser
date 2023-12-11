@@ -1,5 +1,5 @@
 # Используйте официальный образ Node.js
-FROM node:15
+FROM node:16
 
 # Установите рабочую директорию внутри контейнера
 WORKDIR /app
@@ -7,7 +7,6 @@ WORKDIR /app
 # Скопируйте package.json и package-lock.json в контейнер
 COPY package*.json ./
 
-# Установите зависимости
 RUN apt-get update && \
     apt-get install -y \
       gconf-service \
@@ -48,6 +47,7 @@ RUN apt-get update && \
       lsb-release \
       xdg-utils \
       wget \
+      libgbm-dev \
       && rm -rf /var/lib/apt/lists/*
 
 RUN npm install
