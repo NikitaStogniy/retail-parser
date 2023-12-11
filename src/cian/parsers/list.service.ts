@@ -218,6 +218,7 @@ export class ScraperListObject {
           }
           //внутренняя информация
           let newPage = await browser.newPage();
+          await newPage.setUserAgent(USER_AGENT);
           await newPage.goto(dataObj['link']);
           const idarr = await dataObj['link'].split('/');
           dataObj['propid'] = parseInt(idarr[idarr.length - 2]);
