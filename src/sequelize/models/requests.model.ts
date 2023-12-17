@@ -5,7 +5,6 @@ import {
   BelongsTo,
   ForeignKey,
 } from 'sequelize-typescript';
-import { User } from './user.model';
 
 @Table
 export class Requests extends Model {
@@ -24,10 +23,4 @@ export class Requests extends Model {
   @Column
   status: string;
 
-  @ForeignKey(() => User)
-  @Column
-  userId: number;
-
-  @BelongsTo(() => User)
-  user: User;
 }

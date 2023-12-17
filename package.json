@@ -38,7 +38,9 @@
     "rxjs": "^7.8.1",
     "sequelize": "^6.35.1",
     "sequelize-typescript": "^2.1.6",
-    "swagger-ui-express": "^5.0.0"
+    "swagger-ui-express": "^5.0.0",
+    "tesseract.js": "^1.0.19",
+    "tesseract.ts": "^1.1.2"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",

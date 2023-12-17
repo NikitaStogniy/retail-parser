@@ -14,9 +14,5 @@ export class RequestDto {
 
   @ApiProperty()
   @IsNotEmpty()
-  readonly userId: number;
-
-  @ApiProperty()
-  @IsNotEmpty()
   readonly limit: number;
 }

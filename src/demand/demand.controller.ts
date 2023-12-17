@@ -6,13 +6,10 @@ import {
   Put,
   Body,
   Param,
-  Query,
-  UseGuards,
 } from '@nestjs/common';
 import { ApiOperation, ApiTags, ApiResponse } from '@nestjs/swagger';
 import { DemandService } from './demand.service';
 import { RequestDto } from './dto/request.dto';
-import { Headers } from '@nestjs/common';
 
 @ApiTags('Demand')
 @Controller('demand')
@@ -25,34 +22,8 @@ export class DemandController {
     status: 201,
     description: 'The request has been successfully created.',
   })
-  async parse(
-    @Body() requestDto: RequestDto,
-    @Headers('authorization') authorization: string,
-  ) {
-    return this.demandService.parse(requestDto, authorization);
-  }
-
-  @Post('fastparse')
-  @ApiOperation({ summary: 'Handle new request' })
-  @ApiResponse({
-    status: 201,
-    description: 'The request has been successfully created.',
-  })
-  async fastParse(
-    @Body() requestDto: RequestDto,
-    @Headers('authorization') authorization: string,
-  ) {
-    return this.demandService.fastparse(requestDto, authorization);
-  }
-
-  @Delete('deleteRequestsByUserId/:userId')
-  @ApiOperation({ summary: 'Delete requests by user ID' })
-  @ApiResponse({
-    status: 200,
-    description: 'The requests have been successfully deleted.',
-  })
-  async deleteRequestsByUserId(@Param('userId') userId: number) {
-    return this.demandService.deleteRequestsByUserId(userId);
+  async parse(@Body() requestDto: RequestDto) {
+    return this.demandService.parse(requestDto);
   }
 
   @Put('updateRequest/:id')
@@ -83,15 +54,5 @@ export class DemandController {
   })
   async getRequest(@Param('id') id: number) {
     return this.demandService.getRequest(id);
-  }
-
-  @Get('requestsByUserId/:userId')
-  @ApiOperation({ summary: 'Get requests by user ID' })
-  @ApiResponse({
-    status: 200,
-    description: 'The requests have been successfully retrieved.',
-  })
-  async getRequestsByUserId(@Param('userId') userId: number) {
-    return this.demandService.getRequestsByUserId(userId);
   }
 }

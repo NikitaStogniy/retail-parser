@@ -1,26 +1,21 @@
 import { Module } from '@nestjs/common';
-import { CianService } from '../cian/cian.service';
+import { ParserService } from '../cian/parser.service';
 import { DemandController } from './demand.controller';
 import { DemandService } from './demand.service';
-import { SequelizeModule } from '@nestjs/sequelize';
 import { SequelizeService } from 'src/sequelize/sequelize.service';
-import { UserModule } from '../user/user.module';
-import { UserService } from 'src/user/user.service';
-import { AuthGuard } from 'src/auth/auth.guard';
-import { ScraperListObject } from 'src/cian/parsers/list.service';
-import { ScraperPageObject } from 'src/cian/parsers/page.service';
+import { SequelizeConfigModule } from 'src/sequelize/sequelize.module';
+import { CianParserService } from 'src/cian/parsers/cian.service';
+import { AvitoParserService } from 'src/cian/parsers/avito.service';
 
 @Module({
-  imports: [SequelizeModule, UserModule],
+  imports: [SequelizeConfigModule],
   controllers: [DemandController],
   providers: [
-    ScraperListObject,
-    ScraperPageObject,
-    CianService,
+    ParserService,
     DemandService,
     SequelizeService,
-    UserService,
-    AuthGuard,
+    CianParserService,
+    AvitoParserService,
   ],
 })
 export class DemandModule {}
