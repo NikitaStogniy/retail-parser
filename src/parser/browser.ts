@@ -5,12 +5,14 @@ export async function startBrowser() {
   try {
     console.log('Opening the browser......');
     browser = await puppeteer.launch({
-      // executablePath:
-      //   '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
-      executablePath: '/usr/bin/google-chrome-stable',
-      headless: 'new',
-      args: ['--no-sandbox', '--disable-setuid-sandbox'],
-      //ignoreHTTPSErrors: true,
+      headless: true,
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--single-process',
+      ],
+      ignoreHTTPSErrors: true,
     });
   } catch (err) {
     console.log('Could not create a browser instance => : ', err);

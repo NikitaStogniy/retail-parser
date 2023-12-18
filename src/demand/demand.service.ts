@@ -1,6 +1,6 @@
 // demand.service.ts
 import { Injectable } from '@nestjs/common';
-import { ParserService } from '../cian/parser.service';
+import { ParserService } from '../parser/parser.service';
 import { SequelizeService } from '../sequelize/sequelize.service';
 import { RequestDto } from './dto/request.dto';
 @Injectable()

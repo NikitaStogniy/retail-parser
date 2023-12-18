@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
-import { ParserService } from '../cian/parser.service';
+import { ParserService } from '../parser/parser.service';
 import { DemandController } from './demand.controller';
 import { DemandService } from './demand.service';
 import { SequelizeService } from 'src/sequelize/sequelize.service';
 import { SequelizeConfigModule } from 'src/sequelize/sequelize.module';
-import { CianParserService } from 'src/cian/parsers/cian.service';
-import { AvitoParserService } from 'src/cian/parsers/avito.service';
+import { CianParserService } from 'src/parser/parsers/cian.service';
+import { AvitoParserService } from 'src/parser/parsers/avito.service';
 
 @Module({
   imports: [SequelizeConfigModule],
