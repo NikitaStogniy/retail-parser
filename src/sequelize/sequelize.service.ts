@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Sequelize } from 'sequelize-typescript';
 import { Requests } from './models/requests.model';
 import { RequestDto } from 'src/demand/dto/request.dto';
@@ -20,7 +20,10 @@ export class SequelizeService {
       return newRequest;
     } catch (error) {
       console.error(`Ошибка при добавлении запроса: ${error}`);
-      throw error;
+      throw new HttpException(
+        'Ошибка на сервере',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
   async updateRequest(id: number, status: string) {
@@ -33,7 +36,10 @@ export class SequelizeService {
       return request;
     } catch (error) {
       console.error(`Ошибка при обновлении запроса: ${error}`);
-      throw error;
+      throw new HttpException(
+        'Ошибка на сервере',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
   async getAllRequests() {
@@ -42,7 +48,10 @@ export class SequelizeService {
       return requests;
     } catch (error) {
       console.error(`Ошибка при получении запросов: ${error}`);
-      throw error;
+      throw new HttpException(
+        'Ошибка на сервере',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
   async getRequest(id: number) {
@@ -56,7 +65,10 @@ export class SequelizeService {
       }
     } catch (error) {
       console.error(`Ошибка при получении запроса: ${error}`);
-      throw error;
+      throw new HttpException(
+        'Ошибка на сервере',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
   async deleteRequest(id: number) {
@@ -68,7 +80,10 @@ export class SequelizeService {
       return request;
     } catch (error) {
       console.error(`Ошибка при удалении запроса: ${error}`);
-      throw error;
+      throw new HttpException(
+        'Ошибка на сервере',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
   async addFlats(values: PropertyDto[]) {
@@ -87,7 +102,10 @@ export class SequelizeService {
     } catch (error) {
       console.error(`Ошибка при добавлении квартир: ${error}`);
       await this.updateRequest(requestId, 'error');
-      throw error;
+      throw new HttpException(
+        'Ошибка на сервере',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 }
