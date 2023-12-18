@@ -1,12 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { startBrowser } from './browser';
 import { CianParserService } from './parsers/cian.service';
 import { SequelizeService } from 'src/sequelize/sequelize.service';
 import { AvitoParserService } from './parsers/avito.service';
 import { DataObject } from './parsers/types';
 
-@ApiTags('cian')
 @Injectable()
 export class ParserService {
   constructor(

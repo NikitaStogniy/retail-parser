@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Browser } from 'puppeteer';
 import { MONTHS, USER_AGENT, DataObject } from './types';
-import { Tesseract } from 'tesseract.ts';
+import { createWorker } from 'tesseract.js';
 
 @Injectable()
 export class AvitoParserService {
@@ -87,13 +87,11 @@ export class AvitoParserService {
   }
 
   async parseImg(data) {
-    return Tesseract.recognize(data, {
-      lang: 'eng',
-      logger: (m) => console.log(m),
-    }).then(({ text }) => {
-      console.log('phone', text);
-      return text;
-    });
+    const worker = await createWorker('eng');
+    const ret = await worker.recognize(data);
+    await worker.terminate();
+    console.log('phone', await ret.data.text);
+    return await ret.data.text;
   }
 
   private initializeDataObject(): DataObject {

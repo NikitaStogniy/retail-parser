@@ -3,9 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { ParserService } from '../cian/parser.service';
 import { SequelizeService } from '../sequelize/sequelize.service';
 import { RequestDto } from './dto/request.dto';
-import { ApiTags } from '@nestjs/swagger';
-
-@ApiTags('demand')
 @Injectable()
 export class DemandService {
   constructor(
@@ -32,6 +29,11 @@ export class DemandService {
   async getRequest(id: number) {
     const request = await this.sequelizeService.getRequest(id);
     return request;
+  }
+
+  async getAllRequests() {
+    const requests = await this.sequelizeService.getAllRequests();
+    return requests;
   }
 
   async deleteRequest(id: number) {

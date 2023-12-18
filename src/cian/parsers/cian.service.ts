@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Browser } from 'puppeteer';
-import { MONTHS, USER_AGENT, DataObject } from './types';
+import { USER_AGENT, DataObject } from './types';
 
 @Injectable()
 export class CianParserService {

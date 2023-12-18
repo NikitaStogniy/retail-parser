@@ -1,5 +1,5 @@
 # Используйте официальный образ Node.js
-FROM node:16
+FROM node:18
 
 # Установите рабочую директорию внутри контейнера
 WORKDIR /app
@@ -48,6 +48,10 @@ RUN apt-get update && \
       xdg-utils \
       wget \
       libgbm-dev \
+      && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+      && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' \
+      && apt-get update \
+      && apt-get install -y google-chrome-stable=120.0.6099.109-1 \
       && rm -rf /var/lib/apt/lists/*
 
 RUN npm install

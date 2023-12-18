@@ -2,11 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { Sequelize } from 'sequelize-typescript';
 import { Requests } from './models/requests.model';
 import { RequestDto } from 'src/demand/dto/request.dto';
-import { ApiTags } from '@nestjs/swagger';
 import { PropertyDto } from 'src/demand/dto/property.dto';
 import { Property } from './models/property.model';
 
-@ApiTags('sequelize')
 @Injectable()
 export class SequelizeService {
   constructor(private readonly sequelize: Sequelize) {}
@@ -35,6 +33,15 @@ export class SequelizeService {
       return request;
     } catch (error) {
       console.error(`Ошибка при обновлении запроса: ${error}`);
+      throw error;
+    }
+  }
+  async getAllRequests() {
+    try {
+      const requests = await Requests.findAll();
+      return requests;
+    } catch (error) {
+      console.error(`Ошибка при получении запросов: ${error}`);
       throw error;
     }
   }
