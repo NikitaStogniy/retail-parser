@@ -373,7 +373,7 @@ export class CianParserService {
         try {
           await page.evaluate(() => {
             Array.from(document.querySelectorAll('a'))
-              .find((el) => el.textContent === 'Дальше')
+              .find((el) => el.querySelector('span').textContent === 'Дальше')
               .click();
           });
         } catch (error) {
