@@ -2,27 +2,44 @@ import { Injectable } from '@nestjs/common';
 import { startBrowser } from './browser';
 import { CianParserService } from './parsers/cian.service';
 import { SequelizeService } from 'src/sequelize/sequelize.service';
-import { AvitoParserService } from './parsers/avito.service';
+// import { AvitoParserService } from './parsers/avito.service';
 import { DataObject } from './parsers/types';
+import { ClusterDto } from 'src/demand/dto/cluster.dto';
+import { CianUnpublishedParserService } from './parsers/cianUnpublished.service';
 
 @Injectable()
 export class ParserService {
   constructor(
     private sequelizeService: SequelizeService,
     private cianObject: CianParserService,
-    private avitoObject: AvitoParserService,
+    private unpublishObject: CianUnpublishedParserService,
+    // private avitoObject: AvitoParserService,
   ) {}
 
-  async scrapeList(url: string, requestId: number, limit: number) {
+  async scrapeUnpublished(url: string) {
+    let browserInstance = await startBrowser();
+    try {
+      let service: CianUnpublishedParserService;
+      service = this.unpublishObject;
+      const data = await service.scraper(browserInstance, url);
+      browserInstance.close();
+      return data;
+    } catch (err) {
+      console.log('Could not resolve the browser instance => ', err);
+    }
+  }
+
+  async scrapeList(url: string, limit: number) {
     let browserInstance = await startBrowser();
     try {
       const scrapedData = [];
-      let service: CianParserService | AvitoParserService;
+      // let service: CianParserService | AvitoParserService;
+      let service: CianParserService;
 
       if (url.includes('cian')) {
         service = this.cianObject;
       } else if (url.includes('avito')) {
-        service = this.avitoObject;
+        // service = this.avitoObject;
       } else {
         throw new Error('Unknown service');
       }
@@ -32,11 +49,9 @@ export class ParserService {
       const result = scrapedData.map((item) => {
         return {
           ...item,
-          requestId,
         };
       });
       browserInstance.close();
-      await this.sequelizeService.addFlats(result);
     } catch (err) {
       console.log('Could not resolve the browser instance => ', err);
     }

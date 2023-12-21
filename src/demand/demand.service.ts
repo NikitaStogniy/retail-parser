@@ -18,31 +18,7 @@ export class DemandService {
       limit: requestDto.limit,
     };
 
-    const { id: requestId } = await this.sequelizeService.addRequest({
-      ...request,
-    });
-
-    this.cianService.scrapeList(request.url, requestId, request.limit);
-    return { message: 'Request is being processed', id: requestId };
-  }
-
-  async getRequest(id: number) {
-    const request = await this.sequelizeService.getRequest(id);
-    return request;
-  }
-
-  async getAllRequests() {
-    const requests = await this.sequelizeService.getAllRequests();
-    return requests;
-  }
-
-  async deleteRequest(id: number) {
-    const request = await this.sequelizeService.deleteRequest(id);
-    return request;
-  }
-
-  async updateRequest(id: number, status: string) {
-    const request = await this.sequelizeService.updateRequest(id, status);
-    return request;
+    this.cianService.scrapeList(request.url, request.limit);
+    return { message: 'Request is being processed' };
   }
 }
