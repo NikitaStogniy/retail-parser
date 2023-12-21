@@ -78,7 +78,7 @@ export class BotworkerService {
   async checkCian() {
     // const url =
     //   'https://spb.cian.ru/cat.php?deal_type=sale&engine_version=2&flat_share=2&is_by_homeowner=1&object_type%5B0%5D=1&offer_type=flat&region=2&room1=1&room2=1&room3=1&room4=1&room5=1&room6=1&sort=creation_date_desc';
-    const limit = 100;
+    const limit = 1000;
     const url =
       'https://spb.cian.ru/cat.php?deal_type=sale&engine_version=2&flat_share=2&is_by_homeowner=1&object_type%5B0%5D=1&offer_type=flat&region=2&room1=1&room2=1&room3=1&sort=creation_date_desc';
     this.parserService.scrapeList(url, limit);
