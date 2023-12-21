@@ -52,8 +52,7 @@ export class BotworkerService {
   }
   async parse(ctx) {
     const messageText = ctx.message.text;
-    const cianLinkPattern =
-      /https?:\/\/(www\.|spb\.)?cian\.ru\/(cat\.php\?(currency=2&)?deal_type=sale&engine_version=2&flat_share=2&(foot_min=30&)?is_by_homeowner=1&(maxprice=12000000&)?(minprice=5000000&)?object_type%5B0%5D=1&offer_type=flat&(only_foot=2&)?region=2&room1=1&room2=1&room3=1(&p=\d+)?&sort=creation_date_desc|kupit-kvartiru-1-komn-ili-2-komn|sale\/flat\/\d+)/;
+    const cianLinkPattern = /cian/;
     if (cianLinkPattern.test(messageText)) {
       ctx.reply('Пошел процесс...');
       this.parserService.scrapeList(messageText, 10);
