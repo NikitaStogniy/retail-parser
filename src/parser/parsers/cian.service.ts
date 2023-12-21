@@ -4,6 +4,7 @@ import { USER_AGENT, MONTHS, DataObject } from './types';
 import { ParserService } from '../parser.service';
 import { ClusterDto } from 'src/demand/dto/cluster.dto';
 import { SequelizeService } from 'src/sequelize/sequelize.service';
+import axios from 'axios';
 
 @Injectable()
 export class CianParserService {
@@ -80,12 +81,12 @@ export class CianParserService {
           let latLngData;
           try {
             console.log('address', dataObj['address']);
-            const response = await fetch(
+            const response = await axios.get(
               `http://api.positionstack.com/v1/forward?access_key=76a7021f170b92ea7e0ee8b1f4434b0e&query=${encodeURIComponent(
                 dataObj['address'],
               )}`,
             );
-            latLngData = await response.json();
+            latLngData = response.data;
           } catch (error) {
             console.log('address', dataObj['address']);
             console.log(
