@@ -36,13 +36,7 @@ export class SequelizeService {
       const result = await Users.create(userDto);
       console.log('User created successfully', result);
       return result;
-    } catch (error) {
-      console.error('Error creating user', error);
-      if (error.name === 'SequelizeUniqueConstraintError') {
-        throw new Error('Пользователь с таким uid уже существует');
-      }
-      throw error;
-    }
+    } catch (error) {}
   }
 
   async addFlats(values: PropertyDto[]) {
