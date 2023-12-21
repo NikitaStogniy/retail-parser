@@ -19,10 +19,13 @@ export class CianParserService {
       const data: DataObject[] = [];
 
       let lastPageReached = false;
-
+      let currentPage = 0;
       while (!lastPageReached) {
+        console.log('currentPage', currentPage);
+        currentPage++;
         const divs = await page.$$("div[data-testid='offer-card']");
         for (let div of divs) {
+          await page.waitForTimeout(1000);
           if (data.length >= limit) {
             break;
           }
@@ -366,23 +369,20 @@ export class CianParserService {
             0,
           );
           dataObj['serviceName'] = 'cian';
-          data.push(dataObj);
-          this.saveData(dataObj);
-          newPage.close();
+
+          await this.saveData(dataObj);
+          await newPage.close();
         }
         try {
-          await page.evaluate(() => {
-            Array.from(document.querySelectorAll('a'))
-              .find((el) => el.querySelector('span').textContent === 'Дальше')
-              .click();
-          });
+          const newUrl = url + '&p=' + (currentPage + 1);
+          console.log('newUrl', newUrl);
+          await page.goto(newUrl);
+          await page.setUserAgent(USER_AGENT);
+          page.setDefaultNavigationTimeout(0);
+          console.log(`Navigate to ${newUrl}...`);
         } catch (error) {
-          console.error(
-            'Не удалось найти элемент для перехода на следующую страницу: ',
-            error,
-          );
+          console.error('Ошибка при переходе на следующую страницу: ', error);
           lastPageReached = true;
-          continue;
         }
         const divsOnNewPage = await page.$$("div[data-testid='offer-card']");
         if (divsOnNewPage.length === 0) {

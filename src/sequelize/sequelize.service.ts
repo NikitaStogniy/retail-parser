@@ -242,7 +242,8 @@ export class SequelizeService {
     const median = await this.getMedianPricePerMeter(clusterModel, cluster);
 
     jsonResult['medianPrice'] = median | medianProp.pricePerMeter;
-
+    jsonResult['discount'] =
+      (1 - minPriceProperty.pricePerMeter / (median + 1)) * 100;
     jsonResult['medianProp'] = medianProp.link;
     console.log(jsonResult);
     await this.addShown(minPriceProperty.propid, clusterModel);
