@@ -11,6 +11,7 @@ import { Users } from './models/users.model';
 import { Shown1 } from './models/shown1.model';
 import { Shown2 } from './models/shown2.model';
 import { Shown3 } from './models/shown3.model';
+import { Shown4 } from './models/shown4.model';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { Shown3 } from './models/shown3.model';
           Shown1,
           Shown2,
           Shown3,
+          Shown4,
           Property,
         ],
         autoLoadModels: true,

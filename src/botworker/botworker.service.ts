@@ -10,6 +10,7 @@ export class BotworkerService {
   private bot1: Telegraf;
   private bot2: Telegraf;
   private bot3: Telegraf;
+  private bot4: Telegraf;
 
   constructor(
     private readonly sequelizeService: SequelizeService,
@@ -18,10 +19,12 @@ export class BotworkerService {
     this.bot1 = new Telegraf(process.env.BOT_TOKEN1);
     this.bot2 = new Telegraf(process.env.BOT_TOKEN2);
     this.bot3 = new Telegraf(process.env.BOT_TOKEN3);
+    this.bot4 = new Telegraf(process.env.BOT_TOKEN4);
 
     this.bot1.start((ctx) => this.start(ctx));
     this.bot2.start((ctx) => this.start(ctx));
     this.bot3.start((ctx) => this.start(ctx));
+    this.bot4.start((ctx) => this.start(ctx));
 
     this.bot1.command('check', (ctx) => this.generateMessage());
     this.bot1.command('cian', (ctx) => this.checkCian());
@@ -38,9 +41,15 @@ export class BotworkerService {
     this.bot3.command('count', (ctx) => this.getCount(ctx));
     this.bot3.on(message('text'), (ctx) => this.parse(ctx));
 
+    this.bot4.command('check', (ctx) => this.generateMessage());
+    this.bot4.command('cian', (ctx) => this.checkCian());
+    this.bot4.command('count', (ctx) => this.getCount(ctx));
+    this.bot4.on(message('text'), (ctx) => this.parse(ctx));
+
     this.bot1.launch();
     this.bot2.launch();
     this.bot3.launch();
+    this.bot4.launch();
     this.scheduleCianCheck();
   }
 
@@ -118,6 +127,16 @@ export class BotworkerService {
           this.sendMessage3(id, results[2]);
         }
       }
+
+      if (results[3]) {
+        const isUnpublish = await this.parserService.scrapeUnpublished(
+          results[3]['1stProp'],
+        );
+        console.log(isUnpublish);
+        if (!isUnpublish) {
+          this.sendMessage4(id, results[3]);
+        }
+      }
     });
   }
 
@@ -161,6 +180,25 @@ export class BotworkerService {
     `;
     users.forEach((user) => {
       this.bot3.telegram.sendMessage(parseInt(user), messageText).catch((e) => {
+        // Обработка ошибки
+        console.log(e);
+      });
+    });
+  }
+
+  async sendMessage4(users: string[], message: string) {
+    const messageText = `С чего начали - ${message['1stProp']},
+    Лучшая в кластере - ${message['minPriceProp']},
+    Средняя цена - ${message['medianPrice']}
+    Средняя в кластере - ${message['medianProp']}
+    Скидка от средней - ${message['discount']}%
+
+    Продажа: ${message['salePrice'].toFixed(2)}
+    Покупка: ${message['buyoutPrice'].toFixed(2)}
+    Процент торга: ${message['tradePercent'].toFixed(2)}%
+    `;
+    users.forEach((user) => {
+      this.bot4.telegram.sendMessage(parseInt(user), messageText).catch((e) => {
         // Обработка ошибки
         console.log(e);
       });

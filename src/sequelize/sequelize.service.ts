@@ -26,7 +26,6 @@ export class SequelizeService {
 
   async getUsers() {
     const users = await Users.findAll();
-    console.log('users', users);
     return users;
   }
 
@@ -42,17 +41,14 @@ export class SequelizeService {
 
   async addFlats(values: PropertyDto[]) {
     if (!values.length) {
-      throw new Error('Массив значений пуст');
+      console.log('Массив значений пуст');
     }
     try {
-      console.log('count', values.length);
       await Property.bulkCreate(values, {
         ignoreDuplicates: true,
       });
     } catch (error) {
-
       globalErrorHandler(error);
-
     }
   }
 
@@ -61,9 +57,7 @@ export class SequelizeService {
       const clusters = await Cluster1.bulkCreate(values);
       return clusters;
     } catch (error) {
-
       globalErrorHandler(error);
-
     }
   }
 
@@ -72,9 +66,7 @@ export class SequelizeService {
       const clusters = await Cluster2.bulkCreate(values);
       return clusters;
     } catch (error) {
-
       globalErrorHandler(error);
-
     }
   }
 
@@ -83,9 +75,7 @@ export class SequelizeService {
       const clusters = await Cluster3.bulkCreate(values);
       return clusters;
     } catch (error) {
-
       globalErrorHandler(error);
-
     }
   }
 
@@ -94,9 +84,7 @@ export class SequelizeService {
       const clusters = await Cluster4.bulkCreate(values);
       return clusters;
     } catch (error) {
-
       globalErrorHandler(error);
-
     }
   }
 
@@ -108,7 +96,7 @@ export class SequelizeService {
       results.push(result1);
     } catch (error) {
       results.push([]);
-      console.error(`Ошибка при обработке кластера 1: ${error}`);
+      console.log(`Ошибка при обработке кластера 1: ${error}`);
     }
 
     try {
@@ -117,7 +105,7 @@ export class SequelizeService {
       results.push(result2);
     } catch (error) {
       results.push([]);
-      console.error(`Ошибка при обработке кластера 2: ${error}`);
+      console.log(`Ошибка при обработке кластера 4: ${error}`);
     }
 
     try {
@@ -125,20 +113,23 @@ export class SequelizeService {
 
       results.push(result3);
     } catch (error) {
-
       globalErrorHandler(error);
 
       results.push([]);
-      console.error(`Ошибка при обработке кластера 3: ${error}`);
+      console.log(`Ошибка при обработке кластера 4: ${error}`);
     }
 
     try {
       const result4 = await this.findBestPropertyForCluster(Cluster4);
-
-      results.push(result4);
+      if (result4['tradePercent'] <= 15) {
+        results.push(result4);
+      } else if (result4['tradePercent'] > 0) {
+        results.push(result4);
+        console.log(`Квартира без торга: ${result4}`);
+      }
     } catch (error) {
       results.push([]);
-      console.error(`Ошибка при обработке кластера 4: ${error}`);
+      console.log(`Ошибка при обработке кластера 4: ${error}`);
     }
 
     return results;
@@ -157,18 +148,19 @@ export class SequelizeService {
       order: this.sequelize.random(),
     });
     jsonResult['1stProp'] = randomProperty.link;
+
     if (!randomProperty) {
-      throw new Error('No properties found');
+      console.log('No properties found');
     }
 
     const cluster = await clusterModel.findOne({
       where: { propertyId: randomProperty.id },
     });
 
-    //jsonResult['1stCluster'] = cluster;
+    // jsonResult['1stCluster'] = cluster;
 
     if (!cluster) {
-      throw new Error(`No cluster found for property ${randomProperty.propid}`);
+      console.log(`No cluster found for property ${randomProperty.propid}`);
     }
     const simCluster = await clusterModel.findOne({
       where: { propertyId: randomProperty.propid },
@@ -176,7 +168,7 @@ export class SequelizeService {
     });
 
     if (!simCluster || !simCluster.property) {
-      throw new Error(`No property found for cluster ${randomProperty.propid}`);
+      console.log(`No property found for cluster ${randomProperty.propid}`);
     }
     // Найти все кластеры с такими же параметрами
     let clusters = await this.sequelize.query(
@@ -201,10 +193,9 @@ export class SequelizeService {
       },
     );
     if (!clusters || !clusters.length) {
-      throw new Error(
+      console.log(
         `No similar clusters found for property ${randomProperty.id}`,
       );
-
     }
 
     // Найти кластер с наименьшей ценой
@@ -233,21 +224,41 @@ export class SequelizeService {
     });
 
     jsonResult['minPriceProp'] = minPriceProperty.link;
+    const median = await this.getMedianPricePerMeter(clusterModel, cluster);
 
     const medianProp = await this.findMedianProperty(
       clusterModel,
       cluster,
-      minPriceCluster.pricePerMeter,
+      median,
     );
 
-    const median = await this.getMedianPricePerMeter(clusterModel, cluster);
-
     jsonResult['medianPrice'] = median | medianProp.pricePerMeter;
-    jsonResult['discount'] =
-      (1 - minPriceProperty.pricePerMeter / (median + 1)) * 100;
+    jsonResult['discount'] = (
+      ((1 + minPriceProperty.pricePerMeter - (jsonResult['medianPrice'] + 1)) /
+        (jsonResult['medianPrice'] + 1)) *
+      -100
+    ).toFixed(2);
+
     jsonResult['medianProp'] = medianProp.link;
-    console.log(jsonResult);
     await this.addShown(minPriceProperty.propid, clusterModel);
+
+    const salePrice = await this.calculateSalePrice(
+      medianProp.pricePerMeter,
+      randomProperty.totalArea,
+    );
+    const buyoutPrice = await this.calculateBuyoutPrice(
+      salePrice,
+      randomProperty.totalArea,
+    );
+    const tradePercent = await this.calculateTradePercent(
+      randomProperty.price,
+      buyoutPrice,
+    );
+
+    jsonResult['salePrice'] = salePrice;
+    jsonResult['buyoutPrice'] = buyoutPrice;
+    jsonResult['tradePercent'] = tradePercent;
+
     return jsonResult;
   }
 
@@ -295,6 +306,22 @@ export class SequelizeService {
     }
   }
 
+  async calculateTradePercent(adPrice: number, buyoutPrice: number) {
+    const tradePercent = ((adPrice - buyoutPrice) / adPrice) * 100;
+    return tradePercent;
+  }
+
+  async calculateBuyoutPrice(salePrice: number, area: number) {
+    const renovationPrice = area * 45000;
+    const buyoutPrice = salePrice * 0.88 - 450000 - renovationPrice;
+    return buyoutPrice;
+  }
+
+  async calculateSalePrice(pricePerMeter: number, area: number) {
+    const salePrice = pricePerMeter * area;
+    return salePrice;
+  }
+
   async getMedianPricePerMeter(
     clusterModel:
       | typeof Cluster1
@@ -306,6 +333,7 @@ export class SequelizeService {
     const distance = this.sequelize.literal(
       `(6371 * acos(cos(radians(${cluster.lat})) * cos(radians(lat)) * cos(radians(lng) - radians(${cluster.lng})) + sin(radians(${cluster.lat})) * sin(radians(lat))))`,
     );
+
     const result = await clusterModel.findAll({
       attributes: [
         'yearCategory',
@@ -313,8 +341,8 @@ export class SequelizeService {
         'floorCategory',
         'renovationCategory',
         [
-          this.sequelize.fn('AVG', this.sequelize.col('"pricePerMeter"')),
-          'median',
+          this.sequelize.fn('AVG', this.sequelize.col('pricePerMeter')),
+          'pricePerMeter',
         ],
       ],
       where: {
@@ -330,8 +358,9 @@ export class SequelizeService {
         'renovationCategory',
       ],
     });
-
-    return result[0].pricePerMeter;
+    console.log('result');
+    console.log('result', await result[0].dataValues.pricePerMeter);
+    return result[0].dataValues.pricePerMeter;
   }
 
   async findMedianProperty(

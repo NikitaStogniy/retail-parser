@@ -41,7 +41,7 @@ export class ParserService {
       } else if (url.includes('avito')) {
         // service = this.avitoObject;
       } else {
-        throw new Error('Unknown service');
+        console.log('Unknown service');
       }
 
       const data = await service.scraper(browserInstance, url, limit);

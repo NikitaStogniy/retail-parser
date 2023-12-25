@@ -4,12 +4,10 @@ import { DataObject } from './types';
 import { setupPage } from 'src/setupPage';
 import { initializeDataObject } from 'src/initializeDataObject';
 
-import { USER_AGENT, MONTHS, DataObject } from './types';
-import { ParserService } from '../parser.service';
+import { USER_AGENT, MONTHS } from './types';
 import { ClusterDto } from 'src/demand/dto/cluster.dto';
 import { SequelizeService } from 'src/sequelize/sequelize.service';
 import axios from 'axios';
-
 
 @Injectable()
 export class CianParserService {
@@ -19,7 +17,6 @@ export class CianParserService {
 
     await setupPage(page, url);
     let scrapedData = [];
-
 
     const scrapeCurrentPage = async () => {
       const data: DataObject[] = [];
@@ -173,7 +170,7 @@ export class CianParserService {
               formattedDate = `${currentYear}-${MONTHS[month]}-${day}`;
             }
           } catch (error) {
-            console.error('Ошибка при обработке даты: ', error);
+            console.log('Ошибка при обработке даты: ', error);
           }
           dataObj['dateposted'] = new Date(formattedDate || '1997-01-10');
           dataObj['ownerID'] = await this.safeEvaluate(
@@ -387,7 +384,7 @@ export class CianParserService {
           page.setDefaultNavigationTimeout(0);
           console.log(`Navigate to ${newUrl}...`);
         } catch (error) {
-          console.error('Ошибка при переходе на следующую страницу: ', error);
+          console.log('Ошибка при переходе на следующую страницу: ', error);
           lastPageReached = true;
         }
         const divsOnNewPage = await page.$$("div[data-testid='offer-card']");
