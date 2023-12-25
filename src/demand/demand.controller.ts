@@ -16,15 +16,16 @@ export class DemandController {
 
   @Post('parse')
   async parse(@Body() requestDto: RequestDto) {
+    console.log(requestDto);
     return this.demandService.parse(requestDto);
   }
 
-  @Put('updateRequest/:id')
+  @Put('update/:id')
   async updateRequest(@Param('id') id: number, @Body('status') status: string) {
     return this.demandService.updateRequest(id, status);
   }
 
-  @Delete('deleteRequest/:id')
+  @Delete('delete/:id')
   async deleteRequest(@Param('id') id: number) {
     return this.demandService.deleteRequest(id);
   }

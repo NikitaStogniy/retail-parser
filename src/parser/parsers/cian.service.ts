@@ -1,15 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { Browser } from 'puppeteer';
-import { USER_AGENT, DataObject } from './types';
+import { DataObject } from './types';
+import { setupPage } from 'src/setupPage';
+import { initializeDataObject } from 'src/initializeDataObject';
 
 @Injectable()
 export class CianParserService {
   async scraper(browser: Browser, url: string, limit: number) {
     let page = await browser.newPage();
-    await page.setUserAgent(USER_AGENT);
-    page.setDefaultNavigationTimeout(0);
-    console.log(`Navigate to ${url}...`);
-    await page.goto(url);
+    await setupPage(page, url);
     let scrapedData = [];
     const scrapeCurrentPage = async () => {
       const data: DataObject[] = [];
@@ -110,11 +109,7 @@ export class CianParserService {
   }
 
   private initializeDataObject(): DataObject {
-    const dataObj: DataObject = {
-      link: '',
-      propid: 0,
-      phone: '',
-    };
+    const dataObj = initializeDataObject();
     return dataObj;
   }
 }

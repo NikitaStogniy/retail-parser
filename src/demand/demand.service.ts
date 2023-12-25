@@ -18,6 +18,10 @@ export class DemandService {
       limit: requestDto.limit,
     };
 
+    if (!request.url || !request.limit || !request.name) {
+      return { message: 'Request is not valid' };
+    }
+
     const { id: requestId } = await this.sequelizeService.addRequest({
       ...request,
     });

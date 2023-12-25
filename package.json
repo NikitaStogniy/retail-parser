@@ -26,6 +26,7 @@
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/sequelize": "^10.0.0",
     "class-validator": "^0.14.0",
+    "cors": "^2.8.5",
     "pg": "^8.11.3",
     "puppeteer": "^21.6.1",
     "reflect-metadata": "^0.1.13",

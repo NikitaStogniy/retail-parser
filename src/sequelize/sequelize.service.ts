@@ -4,6 +4,7 @@ import { Requests } from './models/requests.model';
 import { RequestDto } from 'src/demand/dto/request.dto';
 import { PropertyDto } from 'src/demand/dto/property.dto';
 import { Property } from './models/property.model';
+import { globalErrorHandler } from 'src/errorHandler';
 
 @Injectable()
 export class SequelizeService {
@@ -19,11 +20,7 @@ export class SequelizeService {
         .create(request as any);
       return newRequest;
     } catch (error) {
-      console.error(`Ошибка при добавлении запроса: ${error}`);
-      throw new HttpException(
-        'Ошибка на сервере',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      globalErrorHandler(error);
     }
   }
   async updateRequest(id: number, status: string) {
@@ -35,11 +32,7 @@ export class SequelizeService {
       }
       return request;
     } catch (error) {
-      console.error(`Ошибка при обновлении запроса: ${error}`);
-      throw new HttpException(
-        'Ошибка на сервере',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      globalErrorHandler(error);
     }
   }
   async getAllRequests() {
@@ -47,11 +40,7 @@ export class SequelizeService {
       const requests = await Requests.findAll();
       return requests;
     } catch (error) {
-      console.error(`Ошибка при получении запросов: ${error}`);
-      throw new HttpException(
-        'Ошибка на сервере',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      globalErrorHandler(error);
     }
   }
   async getRequest(id: number) {
@@ -64,11 +53,7 @@ export class SequelizeService {
         return request;
       }
     } catch (error) {
-      console.error(`Ошибка при получении запроса: ${error}`);
-      throw new HttpException(
-        'Ошибка на сервере',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      globalErrorHandler(error);
     }
   }
   async deleteRequest(id: number) {
@@ -79,11 +64,7 @@ export class SequelizeService {
       }
       return request;
     } catch (error) {
-      console.error(`Ошибка при удалении запроса: ${error}`);
-      throw new HttpException(
-        'Ошибка на сервере',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      globalErrorHandler(error);
     }
   }
   async addFlats(values: PropertyDto[]) {
@@ -100,12 +81,7 @@ export class SequelizeService {
 
       return await this.updateRequest(requestId, 'done');
     } catch (error) {
-      console.error(`Ошибка при добавлении квартир: ${error}`);
-      await this.updateRequest(requestId, 'error');
-      throw new HttpException(
-        'Ошибка на сервере',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      globalErrorHandler(error);
     }
   }
 }

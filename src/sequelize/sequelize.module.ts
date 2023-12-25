@@ -12,7 +12,7 @@ import { Property } from './models/property.model';
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
         dialect: 'postgres',
-        host: 'db',
+        host: 'localhost',
         port: 5432,
         username: 'postgres',
         password: 'postgres',
