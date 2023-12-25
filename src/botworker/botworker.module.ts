@@ -1,12 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ParserService } from '../parser/parser.service';
-import { DemandController } from './demand.controller';
-import { DemandService } from './demand.service';
+import { DemandController } from 'src/demand/demand.controller';
+import { DemandService } from 'src/demand/demand.service';
 import { SequelizeService } from 'src/sequelize/sequelize.service';
 import { SequelizeConfigModule } from 'src/sequelize/sequelize.module';
 import { CianParserService } from 'src/parser/parsers/cian.service';
 import { CianUnpublishedParserService } from 'src/parser/parsers/cianUnpublished.service';
-// import { AvitoParserService } from 'src/parser/parsers/avito.service';
 
 @Module({
   imports: [SequelizeConfigModule],
@@ -20,4 +19,4 @@ import { CianUnpublishedParserService } from 'src/parser/parsers/cianUnpublished
     // AvitoParserService,
   ],
 })
-export class DemandModule {}
+export class BotworkerModule {}
