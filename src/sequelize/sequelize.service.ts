@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Sequelize } from 'sequelize-typescript';
 import { PropertyDto } from 'src/demand/dto/property.dto';
 import { Property } from './models/property.model';
+import { globalErrorHandler } from 'src/errorHandler';
 import { ClusterDto } from 'src/demand/dto/cluster.dto';
 import { Cluster1 } from './models/cluster1.model';
 import { Cluster2 } from './models/cluster2.model';
@@ -49,11 +50,9 @@ export class SequelizeService {
         ignoreDuplicates: true,
       });
     } catch (error) {
-      console.error(`Ошибка при добавлении квартир: ${error}`);
-      throw new HttpException(
-        'Ошибка на сервере',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+
+      globalErrorHandler(error);
+
     }
   }
 
@@ -62,8 +61,9 @@ export class SequelizeService {
       const clusters = await Cluster1.bulkCreate(values);
       return clusters;
     } catch (error) {
-      console.error(`Ошибка при добавлении кластеров: ${error}`);
-      throw error;
+
+      globalErrorHandler(error);
+
     }
   }
 
@@ -72,8 +72,9 @@ export class SequelizeService {
       const clusters = await Cluster2.bulkCreate(values);
       return clusters;
     } catch (error) {
-      console.error(`Ошибка при добавлении кластеров: ${error}`);
-      throw error;
+
+      globalErrorHandler(error);
+
     }
   }
 
@@ -82,8 +83,9 @@ export class SequelizeService {
       const clusters = await Cluster3.bulkCreate(values);
       return clusters;
     } catch (error) {
-      console.error(`Ошибка при добавлении кластеров: ${error}`);
-      throw error;
+
+      globalErrorHandler(error);
+
     }
   }
 
@@ -92,8 +94,9 @@ export class SequelizeService {
       const clusters = await Cluster4.bulkCreate(values);
       return clusters;
     } catch (error) {
-      console.error(`Ошибка при добавлении кластеров: ${error}`);
-      throw error;
+
+      globalErrorHandler(error);
+
     }
   }
 
@@ -122,6 +125,9 @@ export class SequelizeService {
 
       results.push(result3);
     } catch (error) {
+
+      globalErrorHandler(error);
+
       results.push([]);
       console.error(`Ошибка при обработке кластера 3: ${error}`);
     }
@@ -198,6 +204,7 @@ export class SequelizeService {
       throw new Error(
         `No similar clusters found for property ${randomProperty.id}`,
       );
+
     }
 
     // Найти кластер с наименьшей ценой

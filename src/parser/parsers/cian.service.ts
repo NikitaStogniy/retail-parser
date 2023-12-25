@@ -1,20 +1,26 @@
 import { Injectable } from '@nestjs/common';
 import { Browser } from 'puppeteer';
+import { DataObject } from './types';
+import { setupPage } from 'src/setupPage';
+import { initializeDataObject } from 'src/initializeDataObject';
+
 import { USER_AGENT, MONTHS, DataObject } from './types';
 import { ParserService } from '../parser.service';
 import { ClusterDto } from 'src/demand/dto/cluster.dto';
 import { SequelizeService } from 'src/sequelize/sequelize.service';
 import axios from 'axios';
 
+
 @Injectable()
 export class CianParserService {
   constructor(private readonly sequelizeService: SequelizeService) {}
   async scraper(browser: Browser, url: string, limit: number) {
     let page = await browser.newPage();
-    await page.setUserAgent(USER_AGENT);
-    page.setDefaultNavigationTimeout(0);
-    console.log(`Navigate to ${url}...`);
-    await page.goto(url);
+
+    await setupPage(page, url);
+    let scrapedData = [];
+
+
     const scrapeCurrentPage = async () => {
       const data: DataObject[] = [];
 
@@ -412,53 +418,7 @@ export class CianParserService {
   }
 
   private initializeDataObject(): DataObject {
-    const dataObj: DataObject = {
-      link: '',
-      address: '',
-      city: '',
-      district: '',
-      historicalDistrict: '',
-      metro: '',
-      street: '',
-      houseNumber: '',
-      description: '',
-      footMetro: 0,
-      carMetro: 0,
-      price: 0,
-      propid: 0,
-      dateposted: new Date(),
-      ownerID: 0,
-      phone: '',
-      housingType: '',
-      totalArea: 0,
-      livingArea: 0,
-      kitchenArea: 0,
-      ceilingHeight: 0,
-      bathroom: '',
-      balcony: false,
-      viewFromWindows: '',
-      renovation: '',
-      year: 0,
-      buildingSeries: '',
-      elevatorCount: 0,
-      buildingType: '',
-      overlapType: '',
-      parking: '',
-      entrances: 0,
-      heating: '',
-      emergency: false,
-      floor: 0,
-      totalFloors: 0,
-      cianPrice: 0,
-      serviceName: '',
-      rooms: 0,
-      pricePerMeter: 0,
-      lat: 0,
-      lng: 0,
-      isByOwner: false,
-      updated: new Date(),
-      scrapedAt: new Date(),
-    };
+    const dataObj = initializeDataObject();
     return dataObj;
   }
 

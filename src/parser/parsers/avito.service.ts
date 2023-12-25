@@ -1,3 +1,4 @@
+
 // import { Injectable } from '@nestjs/common';
 // import { Browser } from 'puppeteer';
 // import { MONTHS, USER_AGENT, DataObject } from './types';
@@ -17,6 +18,7 @@
 //         "div[data-marker='catalog-serp'] div[class^='iva-item-root-']",
 //         (divs) => divs.length,
 //       );
+
 
 //       let rate = await page.$$(
 //         'form[class="uxs-2w2XclsRLI uxs-scx40f uxs-2Ql_Y1udt8"] > div > div.uxs-QFD9X9QAio.uxs-8a4j0g > button',
@@ -103,3 +105,4 @@
 //     return dataObj;
 //   }
 // }
+
