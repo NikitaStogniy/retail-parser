@@ -20,11 +20,11 @@ import { Shown4 } from './models/shown4.model';
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({
         dialect: 'postgres',
-        host: 'db',
-        port: 5432,
+        host: '',
+        port: 3002,
         username: 'postgres',
         password: 'postgres',
-        database: 'mydatabase',
+        database: 'data',
         models: [
           Cluster1,
           Cluster2,

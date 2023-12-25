@@ -51,6 +51,7 @@ export class ParserService {
           ...item,
         };
       });
+
       browserInstance.close();
     } catch (err) {
       console.log('Could not resolve the browser instance => ', err);
