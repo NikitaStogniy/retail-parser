@@ -24,7 +24,7 @@ import { Shown4 } from './models/shown4.model';
         port: 5432,
         username: 'postgres',
         password: 'postgres',
-        database: 'mydatabase',
+        database: 'data',
         models: [
           Cluster1,
           Cluster2,

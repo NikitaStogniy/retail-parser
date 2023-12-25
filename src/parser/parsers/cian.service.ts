@@ -27,11 +27,12 @@ export class CianParserService {
         console.log('currentPage', currentPage);
         currentPage++;
         const divs = await page.$$("div[data-testid='offer-card']");
+        if (data.length >= limit) {
+          break;
+        }
         for (let div of divs) {
           await page.waitForTimeout(1000);
-          if (data.length >= limit) {
-            break;
-          }
+
           let dataObj: DataObject = this.initializeDataObject();
 
           dataObj['link'] = await this.safeEvaluate(
