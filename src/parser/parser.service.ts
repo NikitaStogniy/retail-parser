@@ -25,6 +25,7 @@ export class ParserService {
       browserInstance.close();
       return data;
     } catch (err) {
+      browserInstance.close();
       console.log('Could not resolve the browser instance => ', err);
     }
   }
@@ -54,6 +55,7 @@ export class ParserService {
 
       browserInstance.close();
     } catch (err) {
+      browserInstance.close();
       console.log('Could not resolve the browser instance => ', err);
     }
   }
