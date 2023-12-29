@@ -46,10 +46,18 @@ export class BotworkerService {
     this.bot4.command('count', (ctx) => this.getCount(ctx));
     this.bot4.on(message('text'), (ctx) => this.parse(ctx));
 
+    // this.bot5.command('check', (ctx) => this.generateMessage());
+    // this.bot5.command('cian', (ctx) => this.checkCian());
+    // this.bot5.command('count', (ctx) => this.getCount(ctx));
+    // this.bot5.command('clusters', (ctx) => this.countClusters(ctx));
+    // this.bot5.command('flatclusters', (ctx) => this.countFlatsInClusters(ctx));
+    // this.bot5.on(message('text'), (ctx) => this.parse(ctx));
+
     this.bot1.launch();
     this.bot2.launch();
     this.bot3.launch();
     this.bot4.launch();
+    // this.bot5.launch();
     this.scheduleCianCheck();
   }
 
@@ -75,6 +83,18 @@ export class BotworkerService {
     console.log(ctx.message);
     ctx.reply(process.env.HELLOMESSAGE || 'Привет');
     this.sequelizeService.saveUser(ctx.message.from.id);
+  }
+
+  async countClusters(ctx) {
+    const count = 'Кластерs: ' + (await this.sequelizeService.countClusters());
+    await ctx.reply(count);
+  }
+
+  async countFlatsInClusters(ctx) {
+    const count =
+      'Объектов внутри clusters: ' +
+      (await this.sequelizeService.countFlatsInClusters());
+    await ctx.reply(count);
   }
 
   async getCount(ctx) {

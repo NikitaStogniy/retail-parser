@@ -88,6 +88,63 @@ export class SequelizeService {
     }
   }
 
+  async countClusters() {
+    const clusters: any[] = await Cluster1.findAll({
+      attributes: [
+        'metroCategory',
+        'yearCategory',
+        'roomsCategory',
+        'floorCategory',
+        'renovationCategory',
+        [Sequelize.fn('COUNT', Sequelize.col('id')), 'count'],
+      ],
+      group: [
+        'metroCategory',
+        'yearCategory',
+        'roomsCategory',
+        'floorCategory',
+        'renovationCategory',
+      ],
+      raw: true,
+    });
+    console.log(clusters[0].count);
+    return clusters[0].count;
+  }
+  async countFlatsInClusters() {
+    const clusters: any[] = await Cluster1.findAll({
+      attributes: [
+        'metroCategory',
+        'yearCategory',
+        'roomsCategory',
+        'floorCategory',
+        'renovationCategory',
+        [Sequelize.fn('COUNT', Sequelize.col('id')), 'count'],
+      ],
+      group: [
+        'metroCategory',
+        'yearCategory',
+        'roomsCategory',
+        'floorCategory',
+        'renovationCategory',
+      ],
+      raw: true,
+    });
+
+    let averageCount = 0;
+
+    if (clusters.length > 0) {
+      averageCount =
+        clusters.reduce(
+          (sum, cluster: any) => sum + Number(cluster['count']),
+          0,
+        ) / clusters.length;
+    }
+
+    console.log(clusters);
+    console.log('Average Count:', averageCount);
+    return averageCount;
+  }
+
   async findBestProperty() {
     const results = [];
     try {
@@ -262,6 +319,81 @@ export class SequelizeService {
     return jsonResult;
   }
 
+  async findCluster(link: string) {
+    const property = await Property.findOne({
+      where: { link: link },
+    });
+
+    const cluster = await Cluster1.findOne({
+      where: { propertyId: property.propid },
+    });
+
+    let propertyIds = await Cluster1.findAll({
+      where: {
+        metroCategory: cluster.metroCategory,
+        yearCategory: cluster.yearCategory,
+        roomsCategory: cluster.roomsCategory,
+        floorCategory: cluster.floorCategory,
+        renovationCategory: cluster.renovationCategory,
+      },
+      attributes: ['propertyId'],
+    });
+
+    propertyIds = propertyIds
+      .sort((a, b) => {
+        const distanceA = this.getDistance(
+          cluster.lat,
+          cluster.lng,
+          a.lat,
+          a.lng,
+        );
+        const distanceB = this.getDistance(
+          cluster.lat,
+          cluster.lng,
+          b.lat,
+          b.lng,
+        );
+        return distanceA - distanceB;
+      })
+      .filter((property) => {
+        const distance = this.getDistance(
+          cluster.lat,
+          cluster.lng,
+          property.lat,
+          property.lng,
+        );
+        return distance <= 2;
+      });
+
+    const propertyLinks = await Property.findAll({
+      where: { propid: propertyIds.map((p) => p.propertyId) },
+      attributes: ['link'],
+    });
+    console.log(propertyLinks);
+    return propertyLinks;
+  }
+
+  getDistance(lat1: number, lon1: number, lat2: number, lon2: number) {
+    const R = 6371; // Radius of the earth in km
+    const dLat = this.deg2rad(lat2 - lat1); // deg2rad below
+    const dLon = this.deg2rad(lon2 - lon1);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(this.deg2rad(lat1)) *
+        Math.cos(this.deg2rad(lat2)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const d = R * c; // Distance in km
+
+    return d;
+  }
+
+  deg2rad(deg: number) {
+    return deg * (Math.PI / 180);
+  }
+
   async getCount() {
     const count = await Property.count();
     return count;
@@ -312,8 +444,7 @@ export class SequelizeService {
   }
 
   async calculateBuyoutPrice(salePrice: number, area: number) {
-    const renovationPrice = area * 45000;
-    const buyoutPrice = salePrice * 0.88 - 450000 - renovationPrice;
+    const buyoutPrice = salePrice * 0.86;
     return buyoutPrice;
   }
 
