@@ -6,6 +6,7 @@ import {
   AutoIncrement,
   ForeignKey,
   BelongsTo,
+  DataType,
 } from 'sequelize-typescript';
 import { Property } from './property.model';
 
@@ -38,10 +39,10 @@ export class Cluster3 extends Model<Cluster3> {
   @Column
   renovationCategory: number;
 
-  @Column
+  @Column(DataType.FLOAT)
   lat: number;
 
-  @Column
+  @Column(DataType.FLOAT)
   lng: number;
 
   @Column

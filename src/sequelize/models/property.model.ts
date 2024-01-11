@@ -4,6 +4,7 @@ import {
   Model,
   AutoIncrement,
   PrimaryKey,
+  DataType,
 } from 'sequelize-typescript';
 
 @Table
@@ -142,9 +143,9 @@ export class Property extends Model<Property> {
   @Column
   serviceName: string;
 
-  @Column
+  @Column(DataType.FLOAT)
   lat: number;
 
-  @Column
+  @Column(DataType.FLOAT)
   lng: number;
 }

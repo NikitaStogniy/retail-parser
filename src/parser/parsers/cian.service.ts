@@ -89,9 +89,9 @@ export class CianParserService {
           try {
             console.log('address', dataObj['address']);
             const response = await axios.get(
-              `http://api.positionstack.com/v1/forward?access_key=76a7021f170b92ea7e0ee8b1f4434b0e&query=${encodeURIComponent(
-                dataObj['address'],
-              )}`,
+              `http://api.positionstack.com/v1/forward?access_key=${
+                process.env.GEOCODER_API_KEY
+              }&query=${encodeURIComponent(dataObj['address'])}`,
             );
             latLngData = response.data;
           } catch (error) {
