@@ -16,10 +16,19 @@ export class BotworkerService {
     private readonly sequelizeService: SequelizeService,
     private readonly parserService: ParserService,
   ) {
-    this.bot1 = new Telegraf(process.env.BOT_TOKEN1);
-    this.bot2 = new Telegraf(process.env.BOT_TOKEN2);
-    this.bot3 = new Telegraf(process.env.BOT_TOKEN3);
-    this.bot4 = new Telegraf(process.env.BOT_TOKEN4);
+    const isProd = process.env.isProd;
+    this.bot1 = new Telegraf(
+      isProd ? process.env.PROD_BOT_TOKEN1 : process.env.DEV_BOT_TOKEN1,
+    );
+    this.bot2 = new Telegraf(
+      isProd ? process.env.PROD_BOT_TOKEN2 : process.env.DEV_BOT_TOKEN2,
+    );
+    this.bot3 = new Telegraf(
+      isProd ? process.env.PROD_BOT_TOKEN3 : process.env.DEV_BOT_TOKEN3,
+    );
+    this.bot4 = new Telegraf(
+      isProd ? process.env.PROD_BOT_TOKEN4 : process.env.DEV_BOT_TOKEN4,
+    );
 
     this.bot1.start((ctx) => this.start(ctx));
     this.bot2.start((ctx) => this.start(ctx));
