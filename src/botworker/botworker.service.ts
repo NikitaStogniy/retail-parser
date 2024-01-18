@@ -29,21 +29,25 @@ export class BotworkerService {
     this.bot1.command('check', (ctx) => this.generateMessage());
     this.bot1.command('cian', (ctx) => this.checkCian());
     this.bot1.command('count', (ctx) => this.getCount(ctx));
+    this.bot1.command('drop', (ctx) => this.droppDB(ctx));
     this.bot1.on(message('text'), (ctx) => this.parse(ctx));
 
     this.bot2.command('check', (ctx) => this.generateMessage());
     this.bot2.command('cian', (ctx) => this.checkCian());
     this.bot2.command('count', (ctx) => this.getCount(ctx));
+    this.bot2.command('drop', (ctx) => this.droppDB(ctx));
     this.bot2.on(message('text'), (ctx) => this.parse(ctx));
 
     this.bot3.command('check', (ctx) => this.generateMessage());
     this.bot3.command('cian', (ctx) => this.checkCian());
     this.bot3.command('count', (ctx) => this.getCount(ctx));
+    this.bot3.command('drop', (ctx) => this.droppDB(ctx));
     this.bot3.on(message('text'), (ctx) => this.parse(ctx));
 
     this.bot4.command('check', (ctx) => this.generateMessage());
     this.bot4.command('cian', (ctx) => this.checkCian());
     this.bot4.command('count', (ctx) => this.getCount(ctx));
+    this.bot4.command('drop', (ctx) => this.droppDB(ctx));
     this.bot4.on(message('text'), (ctx) => this.parse(ctx));
 
     // this.bot5.command('check', (ctx) => this.generateMessage());
@@ -63,26 +67,28 @@ export class BotworkerService {
 
   scheduleCianCheck() {
     cron.schedule('0 * * * *', () => {
-      this.checkCian();
       this.generateMessage();
     });
   }
   async parse(ctx) {
     const messageText = ctx.message.text;
     const cianLinkPattern = /cian/;
-    if (cianLinkPattern.test(messageText)) {
+    if (cianLinkPattern.test(messageText) && messageText.length < 1) {
       ctx.reply('Пошел процесс...');
       this.parserService.scrapeList(messageText, 10);
     } else {
-      console.log(messageText);
       ctx.reply('Не пошел процесс, проверь ссылку');
     }
     // this.parserService.scrapeList(ctx.message.text, 100),
   }
   async start(ctx) {
-    console.log(ctx.message);
     ctx.reply(process.env.HELLOMESSAGE || 'Привет');
     this.sequelizeService.saveUser(ctx.message.from.id);
+  }
+
+  async droppDB(ctx) {
+    await this.sequelizeService.dropDB();
+    await ctx.reply('База данных удалена');
   }
 
   async countClusters(ctx) {
@@ -114,16 +120,12 @@ export class BotworkerService {
 
   async generateMessage() {
     this.sequelizeService.findBestProperty().then(async (results) => {
-      console.log(results[0]);
       const users = await this.sequelizeService.getUsers();
-      console.log(users);
       const id = users.filter((user) => user.uid).map((user) => user.uid);
-      console.log(users[0]);
       if (results[0]) {
         const isUnpublish = await this.parserService.scrapeUnpublished(
           results[0]['1stProp'],
         );
-        console.log(isUnpublish);
         if (!isUnpublish) {
           this.sendMessage1(id, results[0]);
         }
@@ -132,7 +134,6 @@ export class BotworkerService {
         const isUnpublish = await this.parserService.scrapeUnpublished(
           results[1]['1stProp'],
         );
-        console.log(isUnpublish);
         if (!isUnpublish) {
           this.sendMessage2(id, results[1]);
         }
@@ -142,7 +143,7 @@ export class BotworkerService {
         const isUnpublish = await this.parserService.scrapeUnpublished(
           results[2]['1stProp'],
         );
-        console.log(isUnpublish);
+
         if (!isUnpublish) {
           this.sendMessage3(id, results[2]);
         }
@@ -152,7 +153,7 @@ export class BotworkerService {
         const isUnpublish = await this.parserService.scrapeUnpublished(
           results[3]['1stProp'],
         );
-        console.log(isUnpublish);
+
         if (!isUnpublish) {
           this.sendMessage4(id, results[3]);
         }

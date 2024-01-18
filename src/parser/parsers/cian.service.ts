@@ -93,7 +93,7 @@ export class CianParserService {
                 process.env.GEOCODER_API_KEY
               }&query=${encodeURIComponent(dataObj['address'])}`,
             );
-            latLngData = response.data;
+            latLngData = await response.data;
           } catch (error) {
             console.log('address', dataObj['address']);
             console.log(
@@ -102,8 +102,9 @@ export class CianParserService {
             latLngData = [{ lat: 'Не указано', lon: 'Не указано' }];
           }
           if (latLngData?.data?.[0]) {
-            dataObj['lat'] = latLngData.data[0].latitude | 0;
-            dataObj['lng'] = latLngData.data[0].longitude | 0;
+            console.log('dataOb1', latLngData.data[0].latitude);
+            dataObj['lat'] = latLngData.data[0].latitude;
+            dataObj['lng'] = latLngData.data[0].longitude;
           } else {
             dataObj['lat'] = 0;
             dataObj['lng'] = 0;
@@ -197,7 +198,8 @@ export class CianParserService {
           //внутренняя информация
           let newPage = await browser.newPage();
           await newPage.setUserAgent(USER_AGENT);
-          await newPage.goto(dataObj['link']);
+          await newPage.goto(dataObj['link'], { timeout: 60000 });
+
           const idarr = await dataObj['link'].split('/');
           dataObj['propid'] = parseInt(idarr[idarr.length - 2]);
           console.log('propID', idarr);
@@ -373,14 +375,14 @@ export class CianParserService {
             0,
           );
           dataObj['serviceName'] = 'cian';
-
+          console.log('dataObj', dataObj['lat']);
           await this.saveData(dataObj);
           await newPage.close();
         }
         try {
           const newUrl = url + '&p=' + (currentPage + 1);
           console.log('newUrl', newUrl);
-          await page.goto(newUrl);
+          await page.goto(newUrl, { timeout: 60000 });
           await page.setUserAgent(USER_AGENT);
           page.setDefaultNavigationTimeout(0);
           console.log(`Navigate to ${newUrl}...`);
@@ -421,6 +423,7 @@ export class CianParserService {
   }
 
   async saveData(scrapedData: any) {
+    console.log('scrapedData', scrapedData.lat);
     const cluster: ClusterDto[] = await this.clusterising1(scrapedData);
     const cluster2: ClusterDto[] = await this.clusterising2(scrapedData);
     const cluster3: ClusterDto[] = await this.clusterising3(scrapedData);
@@ -495,11 +498,13 @@ export class CianParserService {
     cluster1.lat = obj.lat;
     cluster1.lng = obj.lng;
     cluster1.pricePerMeter = obj.pricePerMeter;
+    cluster1.dateposted = obj.dateposted;
     clusters.push(cluster1);
     return clusters;
   }
 
   async clusterising2(dataObj: DataObject): Promise<ClusterDto[]> {
+    console.log('    cluster1.lat ', dataObj.lat);
     const clusters: ClusterDto[] = [];
     const obj = dataObj;
     let metroCategory: number,
@@ -552,6 +557,7 @@ export class CianParserService {
     cluster1.lat = obj.lat;
     cluster1.lng = obj.lng;
     cluster1.pricePerMeter = obj.pricePerMeter;
+    cluster1.dateposted = obj.dateposted;
     clusters.push(cluster1);
     console.log('clusterCheck', clusters[0].propertyId);
     return clusters;
@@ -601,6 +607,7 @@ export class CianParserService {
     cluster1.lat = obj.lat;
     cluster1.lng = obj.lng;
     cluster1.pricePerMeter = obj.pricePerMeter;
+    cluster1.dateposted = obj.dateposted;
     clusters.push(cluster1);
     return clusters;
   }

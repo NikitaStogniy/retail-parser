@@ -16,12 +16,30 @@ import { Shown1 } from './models/shown1.model';
 import { Shown2 } from './models/shown2.model';
 import { Shown4 } from './models/shown4.model';
 
+import * as moment from 'moment';
+
 @Injectable()
 export class SequelizeService {
   constructor(private readonly sequelize: Sequelize) {}
 
   async onModuleInit() {
     await this.sequelize.sync();
+  }
+
+  async dropDB() {
+    try {
+      await Cluster1.destroy({ where: {} });
+      await Cluster2.destroy({ where: {} });
+      await Cluster3.destroy({ where: {} });
+      await Cluster4.destroy({ where: {} });
+      await Shown1.destroy({ where: {} });
+      await Shown2.destroy({ where: {} });
+      await Shown3.destroy({ where: {} });
+      await Shown4.destroy({ where: {} });
+      await Property.destroy({ where: {} });
+    } catch (error) {
+      console.error('Ошибка при удалении таблиц:', error);
+    }
   }
 
   async getUsers() {
@@ -51,6 +69,10 @@ export class SequelizeService {
       globalErrorHandler(error);
     }
   }
+
+  // Получить дату 2 недели назад
+
+  twoWeeksAgo = moment().subtract(2, 'weeks').toDate();
 
   async addClusters(values: ClusterDto[]) {
     try {
@@ -203,6 +225,7 @@ export class SequelizeService {
     // Получить случайную квартиру
     const randomProperty = await Property.findOne({
       order: this.sequelize.random(),
+      where: {},
     });
     jsonResult['1stProp'] = randomProperty.link;
 
@@ -211,7 +234,9 @@ export class SequelizeService {
     }
 
     const cluster = await clusterModel.findOne({
-      where: { propertyId: randomProperty.id },
+      where: {
+        propertyId: randomProperty.id,
+      },
     });
 
     // jsonResult['1stCluster'] = cluster;
@@ -220,7 +245,9 @@ export class SequelizeService {
       console.log(`No cluster found for property ${randomProperty.propid}`);
     }
     const simCluster = await clusterModel.findOne({
-      where: { propertyId: randomProperty.propid },
+      where: {
+        propertyId: randomProperty.propid,
+      },
       include: [Property],
     });
 
@@ -234,6 +261,7 @@ export class SequelizeService {
       AND "roomsCategory" = :roomsCategory 
       AND "floorCategory" = :floorCategory 
       AND "renovationCategory" = :renovationCategory 
+
       AND (6371 * acos(cos(radians(:lat)) * cos(radians(lat)) * cos(radians(lng) - radians(:lng)) + sin(radians(:lat)) * sin(radians(lat)))) <= 2
       `,
       {
@@ -277,7 +305,9 @@ export class SequelizeService {
     jsonResult['bestCluster'] = minPriceCluster.propertyId;
     //найти property по id
     const minPriceProperty = await Property.findOne({
-      where: { propid: minPriceCluster.propertyId },
+      where: {
+        propid: minPriceCluster.propertyId,
+      },
     });
 
     jsonResult['minPriceProp'] = minPriceProperty.link;
@@ -321,11 +351,15 @@ export class SequelizeService {
 
   async findCluster(link: string) {
     const property = await Property.findOne({
-      where: { link: link },
+      where: {
+        link: link,
+      },
     });
 
     const cluster = await Cluster1.findOne({
-      where: { propertyId: property.propid },
+      where: {
+        propertyId: property.propid,
+      },
     });
 
     let propertyIds = await Cluster1.findAll({
@@ -366,7 +400,9 @@ export class SequelizeService {
       });
 
     const propertyLinks = await Property.findAll({
-      where: { propid: propertyIds.map((p) => p.propertyId) },
+      where: {
+        propid: propertyIds.map((p) => p.propertyId),
+      },
       attributes: ['link'],
     });
     console.log(propertyLinks);
@@ -479,6 +515,7 @@ export class SequelizeService {
       where: {
         lat: { [Op.ne]: null },
         lng: { [Op.ne]: null },
+
         pricePerMeter: { [Op.ne]: null },
         [Op.and]: this.sequelize.where(distance, '<=', 2),
       },
@@ -513,6 +550,7 @@ export class SequelizeService {
         roomsCategory: cluster.roomsCategory,
         floorCategory: cluster.floorCategory,
         renovationCategory: cluster.renovationCategory,
+
         lat: { [Op.ne]: null },
         lng: { [Op.ne]: null },
         pricePerMeter: { [Op.ne]: null },

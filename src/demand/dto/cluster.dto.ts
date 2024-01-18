@@ -1,4 +1,4 @@
-import { IsNumber } from 'class-validator';
+import { IsDate, IsLatitude, IsLongitude, IsNumber } from 'class-validator';
 
 export class ClusterDto {
   @IsNumber()
@@ -19,12 +19,15 @@ export class ClusterDto {
   @IsNumber()
   renovationCategory: number;
 
-  @IsNumber()
+  @IsLatitude()
   lat: number;
 
-  @IsNumber()
+  @IsLongitude()
   lng: number;
 
   @IsNumber()
   pricePerMeter: number;
+
+  @IsDate()
+  dateposted: Date;
 }

@@ -47,4 +47,7 @@ export class Cluster3 extends Model<Cluster3> {
 
   @Column
   pricePerMeter: number;
+
+  @Column
+  dateposted: Date;
 }

@@ -8,7 +8,6 @@ export class DemandController {
 
   @Post('parse')
   async parse(@Body() requestDto: RequestDto) {
-    console.log(requestDto);
     return this.demandService.parse(requestDto);
   }
 }

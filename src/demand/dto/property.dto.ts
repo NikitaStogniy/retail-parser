@@ -4,6 +4,8 @@ import {
   IsString,
   IsBoolean,
   IsDate,
+  IsLatitude,
+  IsLongitude,
 } from 'class-validator';
 
 export class PropertyDto {
@@ -135,4 +137,10 @@ export class PropertyDto {
 
   @IsString()
   serviceName: string;
+
+  @IsLatitude()
+  lat: number;
+
+  @IsLongitude()
+  lng: number;
 }
