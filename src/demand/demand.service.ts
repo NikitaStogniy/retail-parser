@@ -12,13 +12,13 @@ export class DemandService {
 
   async parse(requestDto: RequestDto) {
     const request = {
-      name: requestDto.name,
+
       url: requestDto.url,
       status: 'processing',
-      limit: requestDto.limit,
+
     };
 
-    this.cianService.scrapeList(request.url, request.limit);
+    this.cianService.scrapeList(request.url);
     return { message: 'Request is being processed' };
   }
 }

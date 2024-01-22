@@ -12,7 +12,7 @@ import axios from 'axios';
 @Injectable()
 export class CianParserService {
   constructor(private readonly sequelizeService: SequelizeService) {}
-  async scraper(browser: Browser, url: string, limit: number) {
+  async scraper(browser: Browser, url: string) {
     let page = await browser.newPage();
 
     await setupPage(page, url);
@@ -23,13 +23,15 @@ export class CianParserService {
 
       let lastPageReached = false;
       let currentPage = 0;
+      if(url.includes('p=')) {
+        let pages = url.split('p=');
+        currentPage = parseInt(pages[1]);
+      }
       while (!lastPageReached) {
         console.log('currentPage', currentPage);
         currentPage++;
         const divs = await page.$$("div[data-testid='offer-card']");
-        if (data.length >= limit) {
-          break;
-        }
+        
         for (let div of divs) {
           await page.waitForTimeout(1000);
 
@@ -380,7 +382,14 @@ export class CianParserService {
           await newPage.close();
         }
         try {
-          const newUrl = url + '&p=' + (currentPage + 1);
+          let newUrl = url;
+          if(newUrl.includes('p=')) {
+            let pages = newUrl.split('p=');
+            let pageNumber = parseInt(pages[1]) + 1;
+            newUrl = pages[0] + 'p=' + pageNumber;
+          } else {
+            newUrl = url + '&p=' + (currentPage + 1);
+          }
           console.log('newUrl', newUrl);
           await page.goto(newUrl, { timeout: 60000 });
           await page.setUserAgent(USER_AGENT);

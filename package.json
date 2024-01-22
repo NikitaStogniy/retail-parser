@@ -26,6 +26,7 @@
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/sequelize": "^10.0.0",
     "axios": "^1.6.2",
+    "binary-extensions": "^2.2.0",
     "class-validator": "^0.14.0",
     "cors": "^2.8.5",
     "node-cron": "^3.0.3",
@@ -35,7 +36,6 @@
     "rxjs": "^7.8.1",
     "sequelize": "^6.35.1",
     "sequelize-typescript": "^2.1.6",
-    "telegraf": "^4.15.3",
     "tesseract.js": "^5.0.3"
   },
   "devDependencies": {

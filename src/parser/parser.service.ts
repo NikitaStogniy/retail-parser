@@ -33,23 +33,22 @@ export class ParserService {
       }
     }
   }
-
-  async scrapeList(url: string, limit: number) {
+  async scrapeList(url: string) {
     let browserInstance = await startBrowser();
     try {
       const scrapedData = [];
-      // let service: CianParserService | AvitoParserService;
       let service: CianParserService;
 
       if (url.includes('cian')) {
         service = this.cianObject;
       } else if (url.includes('avito')) {
         // service = this.avitoObject;
+        throw new Error('Avito service is not implemented');
       } else {
-        console.log('Unknown service');
+        throw new Error('Unknown service');
       }
 
-      const data = await service.scraper(browserInstance, url, limit);
+      const data = await service.scraper(browserInstance, url);
       scrapedData.push(...data);
       const result = scrapedData.map((item) => {
         return {
@@ -58,9 +57,11 @@ export class ParserService {
       });
 
       browserInstance.close();
+      return result;
     } catch (err) {
       browserInstance.close();
       console.log('Could not resolve the browser instance => ', err);
+      throw err;
     } finally {
       if (browserInstance) {
         browserInstance.close();
