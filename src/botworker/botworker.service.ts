@@ -222,10 +222,9 @@ export class BotworkerService {
     Средняя цена - ${message['medianPrice']}
     Средняя в кластере - ${message['medianProp']}
     Скидка от средней - ${message['discount']}%
-
-    Продажа: ${message['salePrice'].toFixed(2)}
-    Покупка: ${message['buyoutPrice'].toFixed(2)}
-    Процент торга: ${message['tradePercent'].toFixed(2)}%
+    Продажа: ${message['salePrice'] ? message['salePrice'].toFixed(2) : 'н/д'}
+    Покупка: ${message['buyoutPrice'] ? message['buyoutPrice'].toFixed(2) : 'н/д'}
+    Процент торга: ${message['tradePercent'] ? message['tradePercent'].toFixed(2) : 'н/д'}%
     `;
     users.forEach((user) => {
       this.bot4.telegram.sendMessage(parseInt(user), messageText).catch((e) => {
