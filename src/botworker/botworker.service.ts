@@ -171,9 +171,9 @@ export class BotworkerService {
   }
 
   async sendMessage1(users: string[], message: string) {
-    const messageText = `С чего начали - ${message['1stProp']},
+    const messageText = `Найдена квартира - ${message['1stProp']},
     Лучшая в кластере - ${message['minPriceProp']},
-    Средняя цена - ${message['medianPrice']}
+    Средняя цена - ${message['medianPrice']}₽
     Средняя в кластере - ${message['medianProp']}
     Скидка от средней - ${message['discount']}%
   
@@ -187,9 +187,9 @@ export class BotworkerService {
   }
 
   async sendMessage2(users: string[], message: string) {
-    const messageText = `С чего начали - ${message['1stProp']},
+    const messageText = `Найдена квартира - ${message['1stProp']},
     Лучшая в кластере - ${message['minPriceProp']},
-    Средняя цена - ${message['medianPrice']}
+    Средняя цена - ${message['medianPrice']}₽
     Средняя в кластере - ${message['medianProp']}
     Скидка от средней - ${message['discount']}%
     `;
@@ -202,9 +202,9 @@ export class BotworkerService {
   }
 
   async sendMessage3(users: string[], message: string) {
-    const messageText = `С чего начали - ${message['1stProp']},
+    const messageText = `Найдена квартира - ${message['1stProp']},
     Лучшая в кластере - ${message['minPriceProp']},
-    Средняя цена - ${message['medianPrice']}
+    Средняя цена - ${message['medianPrice']}₽
     Средняя в кластере - ${message['medianProp']}
     Скидка от средней - ${message['discount']}%
     `;
@@ -217,9 +217,9 @@ export class BotworkerService {
   }
 
   async sendMessage4(users: string[], message: string) {
-    const messageText = `С чего начали - ${message['1stProp']},
+    const messageText = `Найдена квартира - ${message['1stProp']},
     Лучшая в кластере - ${message['minPriceProp']},
-    Средняя цена - ${message['medianPrice']}
+    Средняя цена - ${message['medianPrice']}₽
     Средняя в кластере - ${message['medianProp']}
     Скидка от средней - ${message['discount']}%
     Продажа: ${message['salePrice'] ? message['salePrice'].toFixed(2) : 'н/д'}
