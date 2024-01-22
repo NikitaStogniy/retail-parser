@@ -551,8 +551,8 @@ export class SequelizeService {
         floorCategory: cluster.floorCategory,
         renovationCategory: cluster.renovationCategory,
 
-        lat: { [Op.ne]: null },
-        lng: { [Op.ne]: null },
+        lat: { [Op.ne]: cluster.lat },
+        lng: { [Op.ne]: cluster.lng },
         pricePerMeter: { [Op.ne]: null },
         [Op.and]: this.sequelize.where(distance, '<=', 2),
       },
